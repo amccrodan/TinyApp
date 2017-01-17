@@ -7,10 +7,25 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
 
+
 var urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
 };
+
+function generateRandomString() {
+  const possibleChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let outputStr = '';
+
+  for (let i = 0; i < 6; i++) {
+    const character = possibleChars.charAt(Math.floor((Math.random()*62)));
+    outputStr += character;
+  }
+
+  return outputStr;
+}
+
+// Routing info
 
 app.get('/', (req, res) => {
   res.end('Hello!');
