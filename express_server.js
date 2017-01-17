@@ -66,7 +66,12 @@ app.get('/urls/:id', (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = '';
+  if (urlDatabase.hasOwnProperty(req.params.shortURL)) {
+    longURL = urlDatabase[req.params.shortURL];
+  } else {
+    longURL = `/urls/${req.params.shortURL}`;
+  }
   res.redirect(longURL);
 });
 
