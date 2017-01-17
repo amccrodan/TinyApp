@@ -27,7 +27,12 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
-  let templateVars = { shortURL: req.params.id };
+  let templateVars = {shortURL: req.params.id}
+  if (urlDatabase.hasOwnProperty(req.params.id)) {
+    templateVars.longURL = urlDatabase[req.params.id];
+  } else {
+    templateVars.longURL = 'Short URL not found in database';
+  }
   res.render('urls_show', templateVars);
 });
 
