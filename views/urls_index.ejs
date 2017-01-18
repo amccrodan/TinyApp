@@ -15,8 +15,8 @@
     </div>
     <div class='row'>
       <div class='col-lg-12'>
-          <div class="panel panel-default">
-            <table class="table table-hover">
+          <div class='panel panel-default'>
+            <table class='table table-hover'>
               <tbody>
                 <% for (let shortURL in urls) { %>
                   <tr>
@@ -26,11 +26,11 @@
                         <dd><%= urls[shortURL] %></dd>
                       </dl>
                     </td>
-                    <td class="text-right text-nowrap">
+                    <td class='text-right text-nowrap'>
                       <form method='POST' action='/urls/<%= shortURL %>/delete'>
-                      <a href='/urls/<%= shortURL %>' class="btn btn-s btn-info">Edit</a>
-                      <button class="btn btn-s btn-danger">
-                        <span class="glyphicon glyphicon-trash"></span>
+                      <a href='/urls/<%= shortURL %>' class='btn btn-s btn-info'>Edit</a>
+                      <button class='btn btn-s btn-danger'>
+                        <span class='glyphicon glyphicon-trash'></span>
                       </button>
                       </form>
                     </td>
