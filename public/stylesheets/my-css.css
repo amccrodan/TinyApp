@@ -19,5 +19,13 @@ dl {
 }
 
 .nav > li > a:hover {
-    background-color: #DDF1F5;
+  background-color: #DDF1F5;
+}
+
+.input-group-addon {
+  background-color: #DDF1F5;
+}
+
+.well {
+  background-color: #DDF1F5;
 }
