@@ -1,21 +1,42 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
+  <meta charset = "utf-8">
   <title>TinyApp</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <style>
+    body {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
+    .jumbotron {
+      margin-top: 10px;
+      padding: 10px;
+    }
+  </style>
 </head>
 <body>
-  <% include partials/_header %>
-  <ul>
-    <% for (let shortURL in urls) { %>
-        <li>
-          <form method='POST' action='/urls/<%= shortURL %>/delete'>
-            <%= shortURL %> --> <%= urls[shortURL] %>
-            <a href='/urls/<%= shortURL %>'>Edit</a>
-            <input type='submit' value='DELETE'>
-          </form>
-        </li>
-    <% } %>
-  </ul>
-  <a href='/urls/new'>Shorten a new URL!</a>
+  <div class='container'>
+    <% include partials/_header %>
+    <div class="jumbotron">
+      <h3>Shorten URLS!</h3>
+      <p class="lead">The current index of URLs is below:</p>
+      <a href='/urls/new'>Shorten a new URL!</a>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="list-group">
+          <% for (let shortURL in urls) { %>
+            <form method='POST' action='/urls/<%= shortURL %>/delete'>
+              <%= shortURL %> --> <%= urls[shortURL] %>
+              <a href='/urls/<%= shortURL %>'>Edit</a>
+              <input type='submit' value='DELETE'>
+            </form>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
