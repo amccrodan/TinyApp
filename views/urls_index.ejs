@@ -6,14 +6,14 @@
 <body>
   <% include partials/_header %>
   <ul>
-    <% for (let site in urls) { %>
+    <% for (let shortURL in urls) { %>
         <li>
-          <form method="POST" action="/urls/<%= site %>/delete">
-            <%= urls[site] %> : <%= site %>   <input type="submit" value="DELETE">
+          <form method="POST" action="/urls/<%= shortURL %>/delete">
+            <%= shortURL %> --> <%= urls[shortURL] %>    <input type="submit" value="DELETE">
           </form>
         </li>
     <% } %>
   </ul>
-  <a href='#'>Shorten a new URL!</a>
+  <a href='/urls/new'>Shorten a new URL!</a>
 </body>
 </html>
