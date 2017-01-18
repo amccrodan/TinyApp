@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 8080; // default port 8080
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static('public'));
 
 app.set('view engine', 'ejs');
 
@@ -52,7 +53,7 @@ app.post('/urls/create', (req, res) => {
   console.log(req.body);  // debug statement to see POST parameters
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/${shortURL}`);
+  res.redirect('/urls');
 });
 
 app.post('/urls/:id/delete', (req, res) => {
