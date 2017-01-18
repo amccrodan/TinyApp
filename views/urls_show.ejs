@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-  <meta charset="utf-8">
+  <meta charset='utf-8'>
   <title>TinyApp</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
   <style>
     body {
       padding-top: 20px;
@@ -16,8 +16,8 @@
     <% include partials/_header %>
     <%= longURL %> : <%= shortURL %>
     <form method='POST' action='/urls/<%= shortURL %>'>
-      <input id="newLongURL" type="text" name="newLongURL" placeholder="http://" style="width: 300px">
-      <input type="submit" value="Update">
+      <input id='newLongURL' type='text' name='newLongURL' placeholder='http://' style='width: 300px'>
+      <input type='submit' value='Update'>
     </form>
   </div>
 </body>
