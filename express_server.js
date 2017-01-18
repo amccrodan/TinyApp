@@ -50,9 +50,14 @@ app.get('/urls/new', (req, res) => {
 
 app.post('/urls/create', (req, res) => {
   console.log(req.body);  // debug statement to see POST parameters
-  const shortURL = generateRandomString(9);
+  const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
+});
+
+app.post('/urls/:id/delete', (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect('/urls');
 });
 
 app.get('/urls/:id', (req, res) => {
