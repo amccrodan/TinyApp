@@ -13,11 +13,11 @@ var urlDatabase = {
   '9sm5xK': 'http://www.google.com'
 };
 
-function generateRandomString() {
+function generateRandomString(length) {
   const possibleChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
   let outputStr = '';
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < length; i++) {
     const character = possibleChars.charAt(Math.floor((Math.random()*62)));
     outputStr += character;
   }
@@ -50,7 +50,7 @@ app.get('/urls/new', (req, res) => {
 
 app.post('/urls/create', (req, res) => {
   console.log(req.body);  // debug statement to see POST parameters
-  const shortURL = generateRandomString();
+  const shortURL = generateRandomString(9);
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
 });
