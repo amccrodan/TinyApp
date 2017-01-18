@@ -4,7 +4,7 @@
   <meta charset = 'utf-8'>
   <title>TinyApp</title>
   <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
-  <link rel='stylesheet' href='stylesheets/my-css.css'>
+  <link rel='stylesheet' href='/stylesheets/my-css.css'>
 </head>
 <body>
   <div class='container'>
@@ -27,7 +27,7 @@
                       </dl>
                     </td>
                     <td class="text-right text-nowrap">
-                      <form class='form-inline' method='POST' action='/urls/<%= shortURL %>/delete'>
+                      <form method='POST' action='/urls/<%= shortURL %>/delete'>
                       <a href='/urls/<%= shortURL %>' class="btn btn-s btn-info">Edit</a>
                       <button class="btn btn-s btn-danger">
                         <span class="glyphicon glyphicon-trash"></span>
