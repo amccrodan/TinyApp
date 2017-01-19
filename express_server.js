@@ -19,7 +19,13 @@ const urlDatabase = {
   '9sm5xK': 'http://www.google.com'
 };
 
-const users = {};
+const users = {
+  'TEST01': {
+    'id':'TEST01',
+    'email':'testuser@test.com',
+    'password':'TESTING'
+  }
+};
 
 function generateRandomString(length) {
   const possibleChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -55,7 +61,19 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
+  let userId = '';
+
+  for (let user in users) {
+    if (users[user].email === req.body.email) {
+      userId = users[user].id;
+    }
+  }
+
+  if (! userId) {
+    res.status(403).send('User email not found.');
+  }
+
+  res.cookie('username', req.body.email);
   res.redirect('/');
 });
 
