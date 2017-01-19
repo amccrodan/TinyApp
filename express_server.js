@@ -1,12 +1,9 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
-
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
 
 const cookieSession = require('cookie-session');
 app.use(cookieSession( {
@@ -137,10 +134,12 @@ app.post('/register', (req, res) => {
   // Validate registration options
   if (req.body.email === '' || req.body.password === '') {
     res.status(400).send('You cannot register with a blank email or password.');
+    return;
   }
   for (let user in users) {
     if (users[user].email === req.body.email) {
       res.status(400).send('User already registered to that email address.');
+      return;
     }
   }
 
