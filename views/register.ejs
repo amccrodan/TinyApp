@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <title>TinyApp</title>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
+  <link rel='stylesheet' href='/stylesheets/my-css.css'>
+</head>
+<body>
+  <div class='container'>
+    <% include partials/_header %>
+    <div class='panel panel-default'>
+      <div class='panel-body'>
+        <form class='form-inline' method='POST' action='/register'>
+          <div class='input-group'>
+            <span class='input-group-addon'>email</span>
+            <input class='form-control' type='text' name='email'>
+          </div>
+          <div class='input-group'>
+            <span class='input-group-addon'>password</span>
+            <input class='form-control' type='text' name='password'>
+          </div>
+          <button class='btn btn-info pull-right' type='submit'>Register!</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
