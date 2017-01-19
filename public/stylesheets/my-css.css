@@ -29,3 +29,13 @@ dl {
 .well {
   background-color: #DDF1F5;
 }
+
+@media (min-width: 768px) {
+  .dl-horizontal dt {
+      width: 230px;
+  }
+
+  .dl-horizontal dd {
+      margin-left: 250px;
+  }
+}
