@@ -16,7 +16,7 @@ app.set('view engine', 'ejs');
 
 const urlDatabase = {
   'b2xVn2': {
-    longUrl: 'http://www.lighthouselabs.ca',
+    longURL: 'http://www.lighthouselabs.ca',
     createdBy: 'TEST01'
   },
   '9sm5xK': {
@@ -57,12 +57,10 @@ function filterDBbyCreator(req, database) {
   const filteredDB = {};
 
   for (let key in database) {
-    console.log(database[key].createdBy, req.cookies['user_id']);
     if (database[key].createdBy === req.cookies['user_id']) {
       filteredDB[key] = database[key];
     }
   }
-  console.log(filteredDB);
   return filteredDB;
 }
 
@@ -179,16 +177,36 @@ app.post('/urls/create', (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
+  // if current user created requested deletion
+  if (urlDatabase[req.params.id].createdBy !== req.cookies['user_id']) {
+    res.status(403).send('You may not delete that.');
+    return;
+  }
+
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
 });
 
 app.post('/urls/:id', (req, res) => {
-  urlDatabase[req.params.id] = req.body.newLongURL;
+  // if current user created requested update
+  if (urlDatabase[req.params.id].createdBy !== req.cookies['user_id']) {
+    res.status(403).send('You may not update that.');
+    return;
+  }
+
+  urlDatabase[req.params.id] = {
+    longURL: req.body.newLongURL,
+    createdBy: req.cookies['user_id']
+  };
   res.redirect('/urls');
 });
 
 app.get('/urls/:id', (req, res) => {
+  if (urlDatabase[req.params.id].createdBy !== req.cookies['user_id']) {
+    res.status(403).send('You may not view that.');
+    return;
+  }
+
   let templateVars = {
     shortURL: req.params.id
   };
@@ -196,7 +214,7 @@ app.get('/urls/:id', (req, res) => {
   templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
 
   if (urlDatabase.hasOwnProperty(req.params.id)) {
-    templateVars.longURL = urlDatabase[req.params.id];
+    templateVars.longURL = urlDatabase[req.params.id].longURL;
   } else {
     templateVars.longURL = 'Short URL not found in database';
   }
