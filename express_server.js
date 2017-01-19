@@ -77,7 +77,12 @@ function filterDBbyCreator(req, database) {
 // Routing info
 
 app.get('/', (req, res) => {
-  res.redirect('/urls');
+  if (isLoggedIn(req)) {
+    res.redirect('/urls');
+    return;
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/urls.json', (req, res) => {
@@ -234,7 +239,7 @@ app.get('/urls/:id', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   let redirURL = '';
   if (urlDatabase.hasOwnProperty(req.params.shortURL)) {
-    redirURL = urlDatabase[req.params.shortURL];
+    redirURL = urlDatabase[req.params.shortURL].longURL;
   } else {
     redirURL = `/urls/${req.params.shortURL}`;
   }
