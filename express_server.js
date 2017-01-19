@@ -39,6 +39,14 @@ function generateRandomString(length) {
   return outputStr;
 }
 
+function isLoggedIn(req) {
+  // check for existence of user because our database is not persistent
+  if (users[req.cookies['user_id']]) {
+    return true;
+  }
+  return false;
+}
+
 // Routing info
 
 app.get('/', (req, res) => {
@@ -55,7 +63,7 @@ app.get('/users.json', (req, res) => {
 
 app.get('/login', (req, res) => {
   let templateVars = {};
-  templateVars.username = (users[req.cookies['user_id']]) ? users[req.cookies['user_id']].email : '';
+  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
 
   res.render('login', templateVars);
 });
@@ -90,7 +98,7 @@ app.post('/logout', (req, res) => {
 
 app.get('/register', (req, res) => {
   let templateVars = {};
-  templateVars.username = (users[req.cookies['user_id']]) ? users[req.cookies['user_id']].email : '';
+  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
 
   res.render('register', templateVars);
 });
@@ -121,14 +129,19 @@ app.get('/urls', (req, res) => {
   let templateVars = {
     urls: urlDatabase
   };
-  templateVars.username = (users[req.cookies['user_id']]) ? users[req.cookies['user_id']].email : '';
+  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
 
   res.render('urls_index', templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
+  if (!isLoggedIn(req)) {
+    res.redirect('/login');
+    return;
+  }
+
   let templateVars = {};
-  templateVars.username = (users[req.cookies['user_id']]) ? users[req.cookies['user_id']].email : '';
+  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
 
   res.render('urls_new', templateVars);
 });
@@ -157,7 +170,7 @@ app.get('/urls/:id', (req, res) => {
     shortURL: req.params.id
   };
 
-  templateVars.username = (users[req.cookies['user_id']]) ? users[req.cookies['user_id']].email : '';
+  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
 
   if (urlDatabase.hasOwnProperty(req.params.id)) {
     templateVars.longURL = urlDatabase[req.params.id];
