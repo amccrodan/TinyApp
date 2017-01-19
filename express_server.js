@@ -8,6 +8,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+const cookieSession = require('cookie-session');
+app.use(cookieSession( {
+  name: 'session',
+  keys: ['KEY'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000
+}));
+
 const bcrypt = require('bcrypt');
 
 app.use(express.static('public'));
@@ -51,7 +60,7 @@ function generateRandomString(length) {
 
 function isLoggedIn(req) {
   // check for existence of user because our database is not persistent
-  if (users[req.cookies['user_id']]) {
+  if (users[req.session['user_id']]) {
     return true;
   }
   return false;
@@ -61,7 +70,7 @@ function filterDBbyCreator(req, database) {
   const filteredDB = {};
 
   for (let key in database) {
-    if (database[key].createdBy === req.cookies['user_id']) {
+    if (database[key].createdBy === req.session['user_id']) {
       filteredDB[key] = database[key];
     }
   }
@@ -83,8 +92,8 @@ app.get('/users.json', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  let templateVars = {};
-  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
+  const templateVars = {};
+  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
 
   res.render('login', templateVars);
 });
@@ -108,19 +117,18 @@ app.post('/login', (req, res) => {
     return;
   }
 
-
-  res.cookie('user_id', user_id);
+  req.session.user_id = user_id;
   res.redirect('/');
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/');
 });
 
 app.get('/register', (req, res) => {
-  let templateVars = {};
-  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
+  const templateVars = {};
+  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
 
   res.render('register', templateVars);
 });
@@ -137,8 +145,8 @@ app.post('/register', (req, res) => {
   }
 
   // Create new user
-  let newUserId = generateRandomString(6);
-  res.cookie('user_id', newUserId);
+  const newUserId = generateRandomString(6);
+  req.session.user_id = newUserId;
   users[newUserId] = {
     id: newUserId,
     email: req.body.email,
@@ -148,10 +156,10 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  let templateVars = {
+  const templateVars = {
     urls: filterDBbyCreator(req, urlDatabase)
   };
-  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
+  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
 
   res.render('urls_index', templateVars);
 });
@@ -162,20 +170,18 @@ app.get('/urls/new', (req, res) => {
     return;
   }
 
-  let templateVars = {};
-  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
+  const templateVars = {};
+  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
 
   res.render('urls_new', templateVars);
 });
 
 app.post('/urls/create', (req, res) => {
-  // debug statement to see POST parameters
-  console.log(req.body);
 
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
-    createdBy: req.cookies['user_id']
+    createdBy: req.session['user_id']
   }
 
   res.redirect('/urls');
@@ -183,7 +189,7 @@ app.post('/urls/create', (req, res) => {
 
 app.post('/urls/:id/delete', (req, res) => {
   // if current user created requested deletion
-  if (urlDatabase[req.params.id].createdBy !== req.cookies['user_id']) {
+  if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
     res.status(403).send('You may not delete that.');
     return;
   }
@@ -194,29 +200,29 @@ app.post('/urls/:id/delete', (req, res) => {
 
 app.post('/urls/:id', (req, res) => {
   // if current user created requested update
-  if (urlDatabase[req.params.id].createdBy !== req.cookies['user_id']) {
+  if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
     res.status(403).send('You may not update that.');
     return;
   }
 
   urlDatabase[req.params.id] = {
     longURL: req.body.newLongURL,
-    createdBy: req.cookies['user_id']
+    createdBy: req.session['user_id']
   };
   res.redirect('/urls');
 });
 
 app.get('/urls/:id', (req, res) => {
-  if (urlDatabase[req.params.id].createdBy !== req.cookies['user_id']) {
+  if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
     res.status(403).send('You may not view that.');
     return;
   }
 
-  let templateVars = {
+  const templateVars = {
     shortURL: req.params.id
   };
 
-  templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
+  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
 
   if (urlDatabase.hasOwnProperty(req.params.id)) {
     templateVars.longURL = urlDatabase[req.params.id].longURL;
