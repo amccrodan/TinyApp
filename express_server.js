@@ -65,11 +65,17 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
+  // Validate registration options
+  if (req.body.email === '' || req.body.password === '') {
+    res.status(400).send('You cannot register with a blank email or password.');
+  }
   for (user in users) {
     if (users[user].email === req.body.email) {
       res.status(400).send('User already registered to that email address.');
     }
   }
+
+  // Create new user
   let newUserId = generateRandomString(6);
   res.cookie('user_id', newUserId);
   users[newUserId] = {
