@@ -1,16 +1,16 @@
 <div class='row'>
-  <div class='col-lg-12 pull-right'>
+  <div class='col-xs-4 col-xs-offset-8'>
     <% if (!username) { %>
-      <form class='inline-form' method='POST' action='/login'>
+      <form class='inline-form pull-right' method='POST' action='/login'>
           <div class='input-group'>
-            <input id='username' class='form-control' type='text' name='username' placeholder='username'>
+            <input id='username' class='form-control' type='text' name='username' width='100' placeholder='username'>
             <span class='input-group-btn'>
               <button class='btn btn-info' type='submit'>Login</button>
             </span>
           </div>
       </form>
     <% } else { %>
-      <form class='inline-form' method='POST' action='/logout'>
+      <form class='inline-form pull-right' method='POST' action='/logout'>
         <span>Hi, <%= username %>   <span>
         <button class='btn btn-info' type='submit'>Logout</button>
       </form>
