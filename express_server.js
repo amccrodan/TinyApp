@@ -19,6 +19,8 @@ const urlDatabase = {
   '9sm5xK': 'http://www.google.com'
 };
 
+const users = {};
+
 function generateRandomString(length) {
   const possibleChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
   let outputStr = '';
@@ -41,6 +43,10 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get('/users.json', (req, res) => {
+  res.json(users);
+});
+
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/');
@@ -56,6 +62,22 @@ app.get('/register', (req, res) => {
     username: req.cookies['username']
   };
   res.render('register', templateVars);
+});
+
+app.post('/register', (req, res) => {
+  for (user in users) {
+    if (users[user].email === req.body.email) {
+      res.status(400).send('User already registered to that email address.');
+    }
+  }
+  let newUserId = generateRandomString(6);
+  res.cookie('user_id', newUserId);
+  users[newUserId] = {
+    id: newUserId,
+    email: req.body.email,
+    password: req.body.password
+  }
+  res.redirect('/');
 });
 
 app.get('/urls', (req, res) => {
