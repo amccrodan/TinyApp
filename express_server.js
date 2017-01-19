@@ -26,11 +26,11 @@ const urlDatabase = {
 };
 
 const users = {
-  // 'TEST01': {
-  //   'id':'TEST01',
-  //   'email':'testuser@test.com',
-  //   'password':'TESTING'
-  // }
+  'TEST01': {
+    'id':'TEST01',
+    'email':'testuser@test.com',
+    'password':'TESTING'
+  }
 };
 
 function generateRandomString(length) {
@@ -51,6 +51,19 @@ function isLoggedIn(req) {
     return true;
   }
   return false;
+}
+
+function filterDBbyCreator(req, database) {
+  const filteredDB = {};
+
+  for (let key in database) {
+    console.log(database[key].createdBy, req.cookies['user_id']);
+    if (database[key].createdBy === req.cookies['user_id']) {
+      filteredDB[key] = database[key];
+    }
+  }
+  console.log(filteredDB);
+  return filteredDB;
 }
 
 // Routing info
@@ -133,7 +146,7 @@ app.post('/register', (req, res) => {
 
 app.get('/urls', (req, res) => {
   let templateVars = {
-    urls: urlDatabase
+    urls: filterDBbyCreator(req, urlDatabase)
   };
   templateVars.username = isLoggedIn(req) ? users[req.cookies['user_id']].email : '';
 
