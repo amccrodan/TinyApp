@@ -160,6 +160,10 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+  if (!isLoggedIn(req)) {
+    res.status(401).send('Please log in to view your links. <a href="/login">Login.</login>');
+  }
+
   const templateVars = {
     urls: filterDBbyCreator(req, urlDatabase)
   };
