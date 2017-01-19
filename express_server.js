@@ -15,8 +15,14 @@ app.set('view engine', 'ejs');
 
 
 const urlDatabase = {
-  'b2xVn2': 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com'
+  'b2xVn2': {
+    longUrl: 'http://www.lighthouselabs.ca',
+    createdBy: 'TEST01'
+  },
+  '9sm5xK': {
+    longURL: 'http://www.google.com',
+    createdBy: 'TEST01'
+  }
 };
 
 const users = {
@@ -151,7 +157,11 @@ app.post('/urls/create', (req, res) => {
   console.log(req.body);
 
   const shortURL = generateRandomString(6);
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    createdBy: req.cookies['user_id']
+  }
+
   res.redirect('/urls');
 });
 
