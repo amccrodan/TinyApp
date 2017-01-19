@@ -8,6 +8,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+const bcrypt = require('bcrypt');
+
 app.use(express.static('public'));
 
 
@@ -25,11 +27,13 @@ const urlDatabase = {
   }
 };
 
+const test_user_pass = 'TESTING'
+const testuser_hashed = bcrypt.hashSync(test_user_pass, 10);
 const users = {
   'TEST01': {
     'id':'TEST01',
     'email':'testuser@test.com',
-    'password':'TESTING'
+    'password': testuser_hashed
   }
 };
 
@@ -91,7 +95,8 @@ app.post('/login', (req, res) => {
   for (let user in users) {
     if (users[user].email === req.body.email) {
       user_id = users[user].id;
-      if (req.body.password !== users[user_id].password) {
+
+      if (!bcrypt.compareSync(req.body.password, users[user_id].password)) {
         res.status(403).send('Incorrect password.');
         return;
       }
@@ -137,7 +142,7 @@ app.post('/register', (req, res) => {
   users[newUserId] = {
     id: newUserId,
     email: req.body.email,
-    password: req.body.password
+    password: bcrypt.hashSync(req.body.password, 10)
   };
   res.redirect('/');
 });
