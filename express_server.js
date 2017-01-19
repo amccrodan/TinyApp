@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 8080; // default port 8080
+const PORT = process.env.PORT || 8080;
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
@@ -22,11 +22,11 @@ const urlDatabase = {
 const users = {};
 
 function generateRandomString(length) {
-  const possibleChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  const possibleChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let outputStr = '';
 
   for (let i = 0; i < length; i++) {
-    const character = possibleChars.charAt(Math.floor((Math.random()*62)));
+    const character = possibleChars.charAt(Math.floor((Math.random() * 62)));
     outputStr += character;
   }
 
@@ -47,6 +47,13 @@ app.get('/users.json', (req, res) => {
   res.json(users);
 });
 
+app.get('/login', (req, res) => {
+  let templateVars = {
+    username: req.cookies['username']
+  };
+  res.render('login', templateVars);
+});
+
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/');
@@ -58,7 +65,7 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-    let templateVars = {
+  let templateVars = {
     username: req.cookies['username']
   };
   res.render('register', templateVars);
@@ -69,7 +76,7 @@ app.post('/register', (req, res) => {
   if (req.body.email === '' || req.body.password === '') {
     res.status(400).send('You cannot register with a blank email or password.');
   }
-  for (user in users) {
+  for (let user in users) {
     if (users[user].email === req.body.email) {
       res.status(400).send('User already registered to that email address.');
     }
@@ -82,7 +89,7 @@ app.post('/register', (req, res) => {
     id: newUserId,
     email: req.body.email,
     password: req.body.password
-  }
+  };
   res.redirect('/');
 });
 
@@ -102,7 +109,9 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.post('/urls/create', (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
+  // debug statement to see POST parameters
+  console.log(req.body);
+
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect('/urls');
@@ -122,7 +131,7 @@ app.get('/urls/:id', (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     username: req.cookies['username']
-  }
+  };
   if (urlDatabase.hasOwnProperty(req.params.id)) {
     templateVars.longURL = urlDatabase[req.params.id];
   } else {
