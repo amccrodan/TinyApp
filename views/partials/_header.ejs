@@ -1,20 +1,17 @@
 <div class='row'>
   <div class='col-xs-6 col-xs-offset-6'>
     <% if (!username) { %>
-      <form class='form-inline pull-right' method='POST' action='/login'>
-          <div class='input-group'>
-            <input id='username' class='form-control' type='text' name='username' width='100' placeholder='username'>
-            <span class='input-group-btn'>
-              <button class='btn btn-info' type='submit'>Login</button>
-            </span>
-          </div>
-          <a href='/register' class='btn btn-info'>Register</a>
-      </form>
+      <div class='pull-right'>
+        <a href='/login' class='btn btn-info'>Login</a>
+        <a href='/register' class='btn btn-info'>Register</a>
+      </div>
     <% } else { %>
-      <form class='inline-form pull-right' method='POST' action='/logout'>
-        <span>Hi, <%= username %> </span>
-        <button class='btn btn-info' type='submit'>Logout</button>
-      </form>
+      <div class='pull-right'>
+        <form class='inline-form' method='POST' action='/logout'>
+          <span>Hi, <%= username %> </span>
+          <button class='btn btn-info' type='submit'>Logout</button>
+        </form>
+      </div>
     <% } %>
   </div>
 </div>
