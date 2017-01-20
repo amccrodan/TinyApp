@@ -211,6 +211,15 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.post('/urls/:id', (req, res) => {
+  if (!urlDatabase.hasOwnProperty(req.params.id)) {
+    res.status(404).send('Link not found.');
+    return;
+  }
+
+  if (!isLoggedIn(req)) {
+    res.status(401).send('Please log in to update this link. <a href="/login">Login.</login>\n');
+    return;
+  }
   // if current user created requested update
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
     res.status(403).send('You may not update that.\n');
@@ -221,7 +230,7 @@ app.post('/urls/:id', (req, res) => {
     longURL: req.body.newLongURL,
     createdBy: req.session['user_id']
   };
-  res.redirect('/urls');
+  res.redirect(`/urls/${req.params.id}`);
 });
 
 app.get('/urls/:id', (req, res) => {
