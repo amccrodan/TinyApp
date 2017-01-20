@@ -13,19 +13,25 @@
       <div class='panel-body'>
         <div class='well'>
           <h4 class='align-left'>Short URL: <a href='/u/<%= shortURL %>'>http://localhost:3000/u/<%= shortURL %></a></h4>
-          <span class='align-right'>Target URL: <%= longURL %></span>
         </div>
         <div>
         </div>
         <form method='POST' action='/urls/<%= shortURL %>'>
           <div class='input-group'>
             <span class='input-group-addon'>Change Target URL:</span>
-            <input id='newLongURL' class='form-control' type='text' name='newLongURL' placeholder='http://'>
+            <input class='form-control' type='text' name='newLongURL' value='<%= longURL %>'>
             <span class='input-group-btn'>
               <button class='btn btn-info' type='submit'>Update!</button>
             </span>
           </div>
         </form>
+        <div class='pull-right'>
+          <form method='POST' action='/urls/<%= shortURL %>/delete'>
+            <button class='btn btn-s btn-danger'>
+              <span class='glyphicon glyphicon-trash'></span>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
