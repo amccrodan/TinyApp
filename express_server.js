@@ -33,12 +33,14 @@ const urlDatabase = {
   'b2xVn2': {
     longURL: 'http://www.lighthouselabs.ca',
     createdBy: 'TEST01',
+    dateCreated: new Date(2017, 1, 20),
     visits: 0,
     uniqueVisits: 0
   },
   '9sm5xK': {
     longURL: 'http://www.google.com',
     createdBy: 'TEST01',
+    dateCreated: new Date(2017, 1, 20),
     visits: 0,
     uniqueVisits: 0
   }
@@ -213,6 +215,7 @@ app.post('/urls', (req, res) => {
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
     createdBy: req.session['user_id'],
+    dateCreated: Date.now(),
     visits: 0,
     uniqueVisits: 0
   };
@@ -268,10 +271,10 @@ app.put('/urls/:id', (req, res) => {
     return;
   }
 
-  urlDatabase[req.params.id] = {
-    longURL: req.body.newLongURL,
-    createdBy: req.session['user_id']
-  };
+  urlDatabase[req.params.id].longURL = req.body.newLongURL;
+  urlDatabase[req.params.id].visits = 0;
+  urlDatabase[req.params.id].uniqueVisits = 0;
+
   res.redirect(`/urls/${req.params.id}`);
 });
 
