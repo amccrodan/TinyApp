@@ -103,6 +103,15 @@ app.get('/', (req, res) => {
   }
 });
 
+// Check all paths starting with urls/ to see if user has logged in
+app.use('/urls', (req, res, next) => {
+  if (!isLoggedIn(req)) {
+    res.status(401).send('Please log in to view this. <a href="/login">Login.</login>\n');
+    return;
+  }
+  next();
+})
+
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
@@ -192,10 +201,6 @@ app.post('/register', (req, res) => {
 
 
 app.get('/urls', (req, res) => {
-  if (!isLoggedIn(req)) {
-    res.status(401).send('Please log in to view your links. <a href="/login">Login.</login>\n');
-    return;
-  }
 
   const templateVars = {
     urls: filterDBbyCreator(req, urlDatabase)
@@ -206,10 +211,6 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  if (!isLoggedIn(req)) {
-    res.status(401).send('Please log in to shorten a new link. <a href="/login">Login.</login>\n');
-    return;
-  }
 
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = {
@@ -225,10 +226,6 @@ app.post('/urls', (req, res) => {
 
 
 app.get('/urls/new', (req, res) => {
-  if (!isLoggedIn(req)) {
-    res.status(401).send('Please log in to shorten a new link. <a href="/login">Login.</login>\n');
-    return;
-  }
 
   const templateVars = {};
   templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
@@ -236,6 +233,18 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
+app.use('/urls/:id', (req, res, next) => {
+  if (!urlDatabase.hasOwnProperty(req.params.id)) {
+    res.status(404).send('NEW not found.');
+    return;
+  }
+
+  if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
+    res.status(403).send('NEW Not yours.\n');
+    return;
+  }
+  next();
+})
 
 app.delete('/urls/:id/delete', (req, res) => {
   // if current user created requested deletion
@@ -252,11 +261,6 @@ app.delete('/urls/:id/delete', (req, res) => {
 app.put('/urls/:id', (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.id)) {
     res.status(404).send('Link not found.');
-    return;
-  }
-
-  if (!isLoggedIn(req)) {
-    res.status(401).send('Please log in to update this link. <a href="/login">Login.</login>\n');
     return;
   }
 
@@ -284,11 +288,6 @@ app.get('/urls/:id', (req, res) => {
     return;
   }
 
-  if (!isLoggedIn(req)) {
-    res.status(401).send('Please log in to view this link. <a href="/login">Login.</login>\n');
-    return;
-  }
-
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
     res.status(403).send('That link belongs to someone else. You may not view it.\n');
     return;
@@ -296,7 +295,9 @@ app.get('/urls/:id', (req, res) => {
 
   const templateVars = {
     shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id].longURL
+    longURL: urlDatabase[req.params.id].longURL,
+    visits: urlDatabase[req.params.id].visits,
+    uniqueVisits: urlDatabase[req.params.id].uniqueVisits
   };
 
   templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
