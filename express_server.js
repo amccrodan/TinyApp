@@ -37,9 +37,9 @@ const test_user_pass = 'TESTING'
 const testuser_hashed = bcrypt.hashSync(test_user_pass, 10);
 const users = {
   'TEST01': {
-    'id':'TEST01',
-    'email':'testuser@test.com',
-    'password': testuser_hashed
+    id:'TEST01',
+    email:'testuser@test.com',
+    password: testuser_hashed
   }
 };
 
@@ -162,6 +162,7 @@ app.post('/register', (req, res) => {
 app.get('/urls', (req, res) => {
   if (!isLoggedIn(req)) {
     res.status(401).send('Please log in to view your links. <a href="/login">Login.</login>');
+    return;
   }
 
   const templateVars = {
@@ -172,19 +173,7 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-app.get('/urls/new', (req, res) => {
-  if (!isLoggedIn(req)) {
-    res.redirect('/login');
-    return;
-  }
-
-  const templateVars = {};
-  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
-
-  res.render('urls_new', templateVars);
-});
-
-app.post('/urls/create', (req, res) => {
+app.post('/urls', (req, res) => {
 
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = {
@@ -193,6 +182,18 @@ app.post('/urls/create', (req, res) => {
   }
 
   res.redirect('/urls');
+});
+
+app.get('/urls/new', (req, res) => {
+  if (!isLoggedIn(req)) {
+    res.status(401).send('Please log in to shorten a new link. <a href="/login">Login.</login>');
+    return;
+  }
+
+  const templateVars = {};
+  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
+
+  res.render('urls_new', templateVars);
 });
 
 app.post('/urls/:id/delete', (req, res) => {
