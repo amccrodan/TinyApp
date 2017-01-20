@@ -18,7 +18,6 @@ const bcrypt = require('bcrypt');
 
 app.use(express.static('public'));
 
-
 app.set('view engine', 'ejs');
 
 
@@ -222,8 +221,18 @@ app.post('/urls/:id', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
+  if (!urlDatabase.hasOwnProperty(req.params.id)) {
+    res.status(404).send('Link not found.');
+    return;
+  }
+
+  if (!isLoggedIn(req)) {
+    res.status(401).send('Please log in to view this link. <a href="/login">Login.</login>');
+    return;
+  }
+
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
-    res.status(403).send('You may not view that.');
+    res.status(403).send('That link belongs to someone else. You may not view it.');
     return;
   }
 
