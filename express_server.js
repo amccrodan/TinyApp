@@ -2,9 +2,11 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Body-parser exposes the body of a request conveniently
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Cookie-session allows use of encrypted cookies
 const cookieSession = require('cookie-session');
 app.use(cookieSession( {
   name: 'session',
@@ -14,13 +16,15 @@ app.use(cookieSession( {
   maxAge: 24 * 60 * 60 * 1000
 }));
 
+// Bcrypt allows hashing of passwords for encrypted storage
 const bcrypt = require('bcrypt');
 
+// Static resources are served from the /public folder
 app.use(express.static('public'));
 
 app.set('view engine', 'ejs');
 
-
+// Simulated database of URLs
 const urlDatabase = {
   'b2xVn2': {
     longURL: 'http://www.lighthouselabs.ca',
@@ -32,6 +36,8 @@ const urlDatabase = {
   }
 };
 
+
+// Simulated database of users
 const test_user_pass = 'TESTING'
 const testuser_hashed = bcrypt.hashSync(test_user_pass, 10);
 const users = {
@@ -42,6 +48,7 @@ const users = {
   }
 };
 
+// Generate a random string of length 'length' selected from the possibleChars array.
 function generateRandomString(length) {
   const possibleChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let outputStr = '';
@@ -54,6 +61,7 @@ function generateRandomString(length) {
   return outputStr;
 }
 
+// Check to see if a user is currently logged in
 function isLoggedIn(req) {
   // check for existence of user because our database is not persistent
   if (users[req.session['user_id']]) {
@@ -62,6 +70,7 @@ function isLoggedIn(req) {
   return false;
 }
 
+// Filters a given database to return items created by the logged-in user
 function filterDBbyCreator(req, database) {
   const filteredDB = {};
 
@@ -73,7 +82,7 @@ function filterDBbyCreator(req, database) {
   return filteredDB;
 }
 
-// Routing info
+// Routing endpoints
 
 app.get('/', (req, res) => {
   if (isLoggedIn(req)) {
@@ -91,6 +100,7 @@ app.get('/urls.json', (req, res) => {
 app.get('/users.json', (req, res) => {
   res.json(users);
 });
+
 
 app.get('/login', (req, res) => {
   if (isLoggedIn(req)) {
@@ -127,10 +137,12 @@ app.post('/login', (req, res) => {
   res.redirect('/');
 });
 
+
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('/');
 });
+
 
 app.get('/register', (req, res) => {
   if (isLoggedIn(req)) {
@@ -168,6 +180,7 @@ app.post('/register', (req, res) => {
   res.redirect('/');
 });
 
+
 app.get('/urls', (req, res) => {
   if (!isLoggedIn(req)) {
     res.status(401).send('Please log in to view your links. <a href="/login">Login.</login>\n');
@@ -197,6 +210,7 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+
 app.get('/urls/new', (req, res) => {
   if (!isLoggedIn(req)) {
     res.status(401).send('Please log in to shorten a new link. <a href="/login">Login.</login>\n');
@@ -209,6 +223,7 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
+
 app.post('/urls/:id/delete', (req, res) => {
   // if current user created requested deletion
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
@@ -219,6 +234,7 @@ app.post('/urls/:id/delete', (req, res) => {
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
 });
+
 
 app.post('/urls/:id', (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.id)) {
@@ -268,6 +284,7 @@ app.get('/urls/:id', (req, res) => {
 
   res.render('urls_show', templateVars);
 });
+
 
 app.get('/u/:shortURL', (req, res) => {
   let redirURL = '';
