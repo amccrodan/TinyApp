@@ -137,12 +137,12 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   // Validate registration options
   if (req.body.email === '' || req.body.password === '') {
-    res.status(400).send('You cannot register with a blank email or password.');
+    res.status(400).send('You cannot register with a blank email or password.\n');
     return;
   }
   for (let user in users) {
     if (users[user].email === req.body.email) {
-      res.status(400).send('User already registered to that email address.');
+      res.status(400).send('User already registered to that email address.\n');
       return;
     }
   }
@@ -160,7 +160,7 @@ app.post('/register', (req, res) => {
 
 app.get('/urls', (req, res) => {
   if (!isLoggedIn(req)) {
-    res.status(401).send('Please log in to view your links. <a href="/login">Login.</login>');
+    res.status(401).send('Please log in to view your links. <a href="/login">Login.</login>\n');
     return;
   }
 
@@ -173,6 +173,10 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
+  if (!isLoggedIn(req)) {
+    res.status(401).send('Please log in to shorten a new link. <a href="/login">Login.</login>\n');
+    return;
+  }
 
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = {
@@ -180,12 +184,12 @@ app.post('/urls', (req, res) => {
     createdBy: req.session['user_id']
   }
 
-  res.redirect('/urls');
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/urls/new', (req, res) => {
   if (!isLoggedIn(req)) {
-    res.status(401).send('Please log in to shorten a new link. <a href="/login">Login.</login>');
+    res.status(401).send('Please log in to shorten a new link. <a href="/login">Login.</login>\n');
     return;
   }
 
@@ -198,7 +202,7 @@ app.get('/urls/new', (req, res) => {
 app.post('/urls/:id/delete', (req, res) => {
   // if current user created requested deletion
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
-    res.status(403).send('You may not delete that.');
+    res.status(403).send('You may not delete that.\n');
     return;
   }
 
@@ -209,7 +213,7 @@ app.post('/urls/:id/delete', (req, res) => {
 app.post('/urls/:id', (req, res) => {
   // if current user created requested update
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
-    res.status(403).send('You may not update that.');
+    res.status(403).send('You may not update that.\n');
     return;
   }
 
@@ -227,26 +231,22 @@ app.get('/urls/:id', (req, res) => {
   }
 
   if (!isLoggedIn(req)) {
-    res.status(401).send('Please log in to view this link. <a href="/login">Login.</login>');
+    res.status(401).send('Please log in to view this link. <a href="/login">Login.</login>\n');
     return;
   }
 
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
-    res.status(403).send('That link belongs to someone else. You may not view it.');
+    res.status(403).send('That link belongs to someone else. You may not view it.\n');
     return;
   }
 
   const templateVars = {
-    shortURL: req.params.id
+    shortURL: req.params.id,
+    longURL: urlDatabase[req.params.id].longURL
   };
 
   templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
 
-  if (urlDatabase.hasOwnProperty(req.params.id)) {
-    templateVars.longURL = urlDatabase[req.params.id].longURL;
-  } else {
-    templateVars.longURL = 'Short URL not found in database';
-  }
   res.render('urls_show', templateVars);
 });
 
