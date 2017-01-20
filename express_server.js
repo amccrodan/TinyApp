@@ -69,15 +69,6 @@ function generateRandomString(length) {
   return outputStr;
 }
 
-// Check to see if a user is currently logged in
-function isLoggedIn(req) {
-  // check for existence of user because our database is not persistent
-  if (users[req.session['user_id']]) {
-    return true;
-  }
-  return false;
-}
-
 // Filters a given database to return items created by the logged-in user
 function filterDBbyCreator(req, database) {
   const filteredDB = {};
@@ -128,11 +119,7 @@ app.get('/login', (req, res) => {
     res.redirect('/');
     return;
   }
-
-  const templateVars = {};
-  templateVars.username = res.locals.user ? users[req.session['user_id']].email : '';
-
-  res.render('login', templateVars);
+  res.render('login');
 });
 
 app.post('/login', (req, res) => {
@@ -170,11 +157,7 @@ app.get('/register', (req, res) => {
     res.redirect('/');
     return;
   }
-
-  const templateVars = {};
-  templateVars.username =  (res.locals.user) ? users[req.session['user_id']].email : '';
-
-  res.render('register', templateVars);
+  res.render('register');
 });
 
 app.post('/register', (req, res) => {
@@ -207,7 +190,6 @@ app.get('/urls', (req, res) => {
   const templateVars = {
     urls: filterDBbyCreator(req, urlDatabase)
   };
-  templateVars.username = res.locals.user ? users[req.session['user_id']].email : '';
 
   res.render('urls_index', templateVars);
 });
@@ -228,11 +210,7 @@ app.post('/urls', (req, res) => {
 
 
 app.get('/urls/new', (req, res) => {
-
-  const templateVars = {};
-  templateVars.username = res.locals.user ? users[req.session['user_id']].email : '';
-
-  res.render('urls_new', templateVars);
+  res.render('urls_new');
 });
 
 app.use('/urls/:id', (req, res, next) => {
@@ -274,9 +252,6 @@ app.get('/urls/:id', (req, res) => {
     visits: urlDatabase[req.params.id].visits,
     uniqueVisits: urlDatabase[req.params.id].uniqueVisits
   };
-
-  templateVars.username = res.locals.user ? users[req.session['user_id']].email : '';
-
   res.render('urls_show', templateVars);
 });
 
