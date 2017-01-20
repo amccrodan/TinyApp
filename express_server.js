@@ -19,6 +19,9 @@ app.use(cookieSession( {
 // Bcrypt allows hashing of passwords for encrypted storage
 const bcrypt = require('bcrypt');
 
+var methodOverride = require('method-override');
+app.use(methodOverride('X-HTTP-Method-Override'));
+
 // Static resources are served from the /public folder
 app.use(express.static('public'));
 
