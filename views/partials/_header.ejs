@@ -1,14 +1,14 @@
 <div class='row'>
   <div class='col-xs-6 col-xs-offset-6'>
-    <% if (!username) { %>
+    <% if (!user) { %>
       <div class='pull-right'>
         <a href='/login' class='btn btn-info'>Login</a>
-        <a href='/register' class='btn btn-info'>Register</a>
+        <a href='/register' class='btn btn-warning'>Register</a>
       </div>
     <% } else { %>
       <div class='pull-right'>
         <form class='inline-form' method='POST' action='/logout'>
-          <span>Hi, <%= username %> </span>
+          <span>Hi, <%= user.email %> </span>
           <a href='/urls' class='btn btn-info'>My Links</a>
           <button class='btn btn-info' type='submit'>Logout</button>
         </form>
