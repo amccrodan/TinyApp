@@ -112,7 +112,7 @@ app.post('/login', (req, res) => {
       user_id = users[user].id;
 
       if (!bcrypt.compareSync(req.body.password, users[user_id].password)) {
-        res.status(403).send('Incorrect password.');
+        res.status(401).send('Incorrect password.');
         return;
       }
     }
