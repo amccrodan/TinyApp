@@ -38,13 +38,13 @@ const urlDatabase = {
 
 
 // Simulated database of users
-const test_user_pass = 'TESTING'
-const testuser_hashed = bcrypt.hashSync(test_user_pass, 10);
+const testUserPass = 'TESTING';
+const testUserHashed = bcrypt.hashSync(test_user_pass, 10);
 const users = {
   'TEST01': {
-    id:'TEST01',
-    email:'testuser@test.com',
-    password: testuser_hashed
+    id: 'TEST01',
+    email: 'testuser@test.com',
+    password: testUserHashed
   }
 };
 
@@ -205,7 +205,7 @@ app.post('/urls', (req, res) => {
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
     createdBy: req.session['user_id']
-  }
+  };
 
   res.redirect(`/urls/${shortURL}`);
 });
@@ -246,6 +246,7 @@ app.post('/urls/:id', (req, res) => {
     res.status(401).send('Please log in to update this link. <a href="/login">Login.</login>\n');
     return;
   }
+
   // if current user created requested update
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
     res.status(403).send('You may not update that.\n');
