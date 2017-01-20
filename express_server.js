@@ -19,6 +19,7 @@ app.use(cookieSession( {
 // Bcrypt allows hashing of passwords for encrypted storage
 const bcrypt = require('bcrypt');
 
+// Method override to allow PUT and DELETE routes
 var methodOverride = require('method-override');
 app.use(methodOverride('_method'));
 
@@ -227,7 +228,7 @@ app.get('/urls/new', (req, res) => {
 });
 
 
-app.post('/urls/:id/delete', (req, res) => {
+app.delete('/urls/:id/delete', (req, res) => {
   // if current user created requested deletion
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
     res.status(403).send('You may not delete that.\n');
@@ -239,7 +240,7 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 
-app.post('/urls/:id', (req, res) => {
+app.put('/urls/:id', (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.id)) {
     res.status(404).send('Link not found.');
     return;
