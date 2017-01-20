@@ -93,6 +93,11 @@ app.get('/users.json', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+  if (isLoggedIn(req)) {
+    res.redirect('/');
+    return;
+  }
+
   const templateVars = {};
   templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
 
