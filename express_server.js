@@ -252,6 +252,11 @@ app.post('/urls/:id', (req, res) => {
     return;
   }
 
+  if (req.body.newLongURL === '') {
+    res.status(400).send('You may not set the link to an empty string.\n');
+    return;
+  }
+
   urlDatabase[req.params.id] = {
     longURL: req.body.newLongURL,
     createdBy: req.session['user_id']
