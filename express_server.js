@@ -33,19 +33,18 @@ const urlDatabase = {
   'b2xVn2': {
     longURL: 'http://www.lighthouselabs.ca',
     createdBy: 'TEST01',
-    dateCreated: new Date(2017, 1, 20),
+    dateCreated: '2017-Jan-18',
     visits: 0,
     uniqueVisits: 0
   },
   '9sm5xK': {
     longURL: 'http://www.google.com',
     createdBy: 'TEST01',
-    dateCreated: new Date(2017, 1, 20),
+    dateCreated: '2017-Jan-18',
     visits: 0,
     uniqueVisits: 0
   }
 };
-
 
 // Simulated database of users
 const testUserPass = 'TESTING';
@@ -67,7 +66,6 @@ function generateRandomString(length) {
     const character = possibleChars.charAt(Math.floor((Math.random() * 62)));
     outputStr += character;
   }
-
   return outputStr;
 }
 
@@ -93,9 +91,13 @@ function filterDBbyCreator(req, database) {
 }
 
 // Routing endpoints
+app.use(function(req, res, next){
+  res.locals.user = users[req.session['user_id']];
+  next();
+});
 
 app.get('/', (req, res) => {
-  if (isLoggedIn(req)) {
+  if (res.locals.user) {
     res.redirect('/urls');
     return;
   } else {
@@ -105,7 +107,7 @@ app.get('/', (req, res) => {
 
 // Check all paths starting with urls/ to see if user has logged in
 app.use('/urls', (req, res, next) => {
-  if (!isLoggedIn(req)) {
+  if (!res.locals.user) {
     res.status(401).send('Please log in to view this. <a href="/login">Login.</login>\n');
     return;
   }
@@ -122,13 +124,13 @@ app.get('/users.json', (req, res) => {
 
 
 app.get('/login', (req, res) => {
-  if (isLoggedIn(req)) {
+  if (res.locals.user) {
     res.redirect('/');
     return;
   }
 
   const templateVars = {};
-  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
+  templateVars.username = res.locals.user ? users[req.session['user_id']].email : '';
 
   res.render('login', templateVars);
 });
@@ -164,13 +166,13 @@ app.post('/logout', (req, res) => {
 
 
 app.get('/register', (req, res) => {
-  if (isLoggedIn(req)) {
+  if (res.locals.user) {
     res.redirect('/');
     return;
   }
 
   const templateVars = {};
-  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
+  templateVars.username =  (res.locals.user) ? users[req.session['user_id']].email : '';
 
   res.render('register', templateVars);
 });
@@ -205,7 +207,7 @@ app.get('/urls', (req, res) => {
   const templateVars = {
     urls: filterDBbyCreator(req, urlDatabase)
   };
-  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
+  templateVars.username = res.locals.user ? users[req.session['user_id']].email : '';
 
   res.render('urls_index', templateVars);
 });
@@ -228,48 +230,31 @@ app.post('/urls', (req, res) => {
 app.get('/urls/new', (req, res) => {
 
   const templateVars = {};
-  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
+  templateVars.username = res.locals.user ? users[req.session['user_id']].email : '';
 
   res.render('urls_new', templateVars);
 });
 
 app.use('/urls/:id', (req, res, next) => {
   if (!urlDatabase.hasOwnProperty(req.params.id)) {
-    res.status(404).send('NEW not found.');
+    res.status(404).send('Resource not found.');
     return;
   }
 
   if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
-    res.status(403).send('NEW Not yours.\n');
+    res.status(403).send('This resource belongs to someone else.\n');
     return;
   }
   next();
 })
 
 app.delete('/urls/:id/delete', (req, res) => {
-  // if current user created requested deletion
-  if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
-    res.status(403).send('You may not delete that.\n');
-    return;
-  }
-
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
 });
 
 
 app.put('/urls/:id', (req, res) => {
-  if (!urlDatabase.hasOwnProperty(req.params.id)) {
-    res.status(404).send('Link not found.');
-    return;
-  }
-
-  // if current user created requested update
-  if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
-    res.status(403).send('You may not update that.\n');
-    return;
-  }
-
   if (req.body.newLongURL === '') {
     res.status(400).send('You may not set the link to an empty string.\n');
     return;
@@ -283,16 +268,6 @@ app.put('/urls/:id', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
-  if (!urlDatabase.hasOwnProperty(req.params.id)) {
-    res.status(404).send('Link not found.');
-    return;
-  }
-
-  if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
-    res.status(403).send('That link belongs to someone else. You may not view it.\n');
-    return;
-  }
-
   const templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
@@ -300,7 +275,7 @@ app.get('/urls/:id', (req, res) => {
     uniqueVisits: urlDatabase[req.params.id].uniqueVisits
   };
 
-  templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
+  templateVars.username = res.locals.user ? users[req.session['user_id']].email : '';
 
   res.render('urls_show', templateVars);
 });
