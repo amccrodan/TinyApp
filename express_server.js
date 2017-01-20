@@ -39,7 +39,7 @@ const urlDatabase = {
 
 // Simulated database of users
 const testUserPass = 'TESTING';
-const testUserHashed = bcrypt.hashSync(test_user_pass, 10);
+const testUserHashed = bcrypt.hashSync(testUserPass, 10);
 const users = {
   'TEST01': {
     id: 'TEST01',
