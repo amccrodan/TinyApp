@@ -133,6 +133,11 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
+  if (isLoggedIn(req)) {
+    res.redirect('/');
+    return;
+  }
+
   const templateVars = {};
   templateVars.username = isLoggedIn(req) ? users[req.session['user_id']].email : '';
 
