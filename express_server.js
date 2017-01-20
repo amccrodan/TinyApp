@@ -20,7 +20,7 @@ app.use(cookieSession( {
 const bcrypt = require('bcrypt');
 
 var methodOverride = require('method-override');
-app.use(methodOverride('X-HTTP-Method-Override'));
+app.use(methodOverride('_method'));
 
 // Static resources are served from the /public folder
 app.use(express.static('public'));
