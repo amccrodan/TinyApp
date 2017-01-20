@@ -11,9 +11,6 @@ const cookieSession = require('cookie-session');
 app.use(cookieSession( {
   name: 'session',
   keys: ['KEY'],
-
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000
 }));
 
 // Bcrypt allows hashing of passwords for encrypted storage
@@ -213,6 +210,7 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
 
+// Applies to all /urls/:id/ checking existence and ownership
 app.use('/urls/:id', (req, res, next) => {
   if (!urlDatabase.hasOwnProperty(req.params.id)) {
     res.status(404).send('Resource not found.');
@@ -226,12 +224,13 @@ app.use('/urls/:id', (req, res, next) => {
   next();
 })
 
+// Delete a specific url
 app.delete('/urls/:id/delete', (req, res) => {
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
 });
 
-
+// Update the long URL of a specific short URL
 app.put('/urls/:id', (req, res) => {
   if (req.body.newLongURL === '') {
     res.status(400).send('You may not set the link to an empty string.\n');
@@ -257,25 +256,23 @@ app.get('/urls/:id', (req, res) => {
 
 
 app.get('/u/:shortURL', (req, res) => {
+  if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
+    res.status(404).send('Resource not found.');
+    return;
+  }
 
   if (!req.session.visited) {
     req.session.visited = [];
   }
 
-  let redirURL = '';
-  if (urlDatabase.hasOwnProperty(req.params.shortURL)) {
-    redirURL = urlDatabase[req.params.shortURL].longURL;
-    urlDatabase[req.params.shortURL].visits += 1;
+  urlDatabase[req.params.shortURL].visits += 1;
 
-    if (req.session.visited.indexOf(req.params.shortURL) === -1) {
-      urlDatabase[req.params.shortURL].uniqueVisits += 1;
-      req.session.visited.push(req.params.shortURL);
-    }
-  } else {
-    redirURL = `/urls/${req.params.shortURL}`;
+  if (req.session.visited.indexOf(req.params.shortURL) === -1) {
+    urlDatabase[req.params.shortURL].uniqueVisits += 1;
+    req.session.visited.push(req.params.shortURL);
   }
 
-  res.redirect(redirURL);
+  res.redirect(urlDatabase[req.params.shortURL].longURL);
 });
 
 app.listen(PORT, () => {
