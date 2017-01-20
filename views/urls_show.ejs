@@ -12,27 +12,34 @@
     <div class='panel panel-default'>
       <div class='panel-body'>
         <div class='well'>
-          <h4 class=''>Short URL: <a href='/u/<%= shortURL %>'>http://localhost:3000/u/<%= shortURL %></a></h4>
-          <span class=''>Target URL: <%= longURL %></span>
+          <h4>Short URL: <a href='/u/<%= shortURL %>'>http://localhost:3000/u/<%= shortURL %></a></h4>
+          <span>Target URL: <%= longURL %></span>
+          <span class='pull-right'>Visits: <%= visits %> Unique: <%= uniqueVisits %></span>
         </div>
-        <div>
-        </div>
-        <form method='POST' action='/urls/<%= shortURL %>?_method=PUT'>
-          <div class='input-group'>
-            <span class='input-group-addon'>Change Target URL:</span>
-            <input class='form-control' type='text' name='newLongURL' placeholder='<%= longURL %>'>
-            <span class='input-group-btn'>
-              <button class='btn btn-info' type='submit'>Update!</button>
-            </span>
-          </div>
-        </form>
-        <div class='pull-right'>
-          <form method='POST' action='/urls/<%= shortURL %>/delete?_method=DELETE'>
-            <button class='btn btn-s btn-danger'>
-              <span class='glyphicon glyphicon-trash'></span>
-            </button>
-          </form>
-        </div>
+        <table class='table'>
+          <tbody>
+            <tr>
+              <td>
+                <form method='POST' action='/urls/<%= shortURL %>?_method=PUT'>
+                  <div class='input-group'>
+                    <span class='input-group-addon'>Change Target URL:</span>
+                      <input class='form-control' type='text' name='newLongURL' placeholder='<%= longURL %>'>
+                    <span class='input-group-btn'>
+                      <button class='btn btn-info' type='submit'>Update!</button>
+                    </span>
+                  </div>
+                </form>
+              </td>
+              <td>
+                <form method='POST' action='/urls/<%= shortURL %>/delete?_method=DELETE'>
+                  <button class='btn btn-s btn-danger'>
+                    <span class='glyphicon glyphicon-trash'></span>
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
