@@ -32,11 +32,15 @@ app.set('view engine', 'ejs');
 const urlDatabase = {
   'b2xVn2': {
     longURL: 'http://www.lighthouselabs.ca',
-    createdBy: 'TEST01'
+    createdBy: 'TEST01',
+    visits: 0,
+    uniqueVisits: 0
   },
   '9sm5xK': {
     longURL: 'http://www.google.com',
-    createdBy: 'TEST01'
+    createdBy: 'TEST01',
+    visits: 0,
+    uniqueVisits: 0
   }
 };
 
@@ -208,7 +212,9 @@ app.post('/urls', (req, res) => {
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
-    createdBy: req.session['user_id']
+    createdBy: req.session['user_id'],
+    visits: 0,
+    uniqueVisits: 0
   };
 
   res.redirect(`/urls/${shortURL}`);
