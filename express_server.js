@@ -303,12 +303,10 @@ app.get('/urls/:id', (req, res) => {
 
 
 app.get('/u/:shortURL', (req, res) => {
-  console.log(`First: ${req.session.visited}`);
+
   if (!req.session.visited) {
     req.session.visited = [];
   }
-
-  console.log(`Second: ${req.session.visited}`);
 
   let redirURL = '';
   if (urlDatabase.hasOwnProperty(req.params.shortURL)) {
@@ -318,7 +316,6 @@ app.get('/u/:shortURL', (req, res) => {
     if (req.session.visited.indexOf(req.params.shortURL) === -1) {
       urlDatabase[req.params.shortURL].uniqueVisits += 1;
       req.session.visited.push(req.params.shortURL);
-      console.log(`Visited: ${req.session.visited}`);
     }
   } else {
     redirURL = `/urls/${req.params.shortURL}`;
