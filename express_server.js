@@ -99,9 +99,8 @@ app.get('/', (req, res) => {
   if (res.locals.user) {
     res.redirect('/urls');
     return;
-  } else {
-    res.redirect('/login');
   }
+  res.redirect('/login');
 });
 
 // Check all paths starting with urls/ to see if user has logged in
