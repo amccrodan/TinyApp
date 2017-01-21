@@ -16,7 +16,7 @@ app.use(cookieSession( {
 // Bcrypt allows hashing of passwords for encrypted storage
 const bcrypt = require('bcrypt');
 
-// Method override to allow PUT and DELETE routes
+// Method override to allow PUT and DELETE routes via query string
 var methodOverride = require('method-override');
 app.use(methodOverride('_method'));
 
@@ -52,7 +52,7 @@ function filterDBbyCreator(req, database) {
   return filteredDB;
 }
 
-// Format date to yyyy-mm-dd
+// Format date to yyyy-mm-ddZ (Z for UTC)
 function formatDate(date) {
   const day = date.getDate();
   const month = date.getMonth() + 1;
@@ -83,15 +83,6 @@ app.use('/urls', (req, res, next) => {
   }
   next();
 });
-
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get('/users.json', (req, res) => {
-  res.json(users);
-});
-
 
 app.get('/login', (req, res) => {
   if (res.locals.user) {
@@ -233,7 +224,6 @@ app.get('/urls/:id', (req, res) => {
   const templateVars = { url: urlDatabase[req.params.id] };
   res.render('urls_show', templateVars);
 });
-
 
 app.get('/u/:shortURL', (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
