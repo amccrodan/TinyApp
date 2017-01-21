@@ -12,18 +12,18 @@
     <div class='panel panel-default'>
       <div class='panel-body'>
         <div class='well'>
-          <h4>Short URL: <a href='/u/<%= shortURL %>'>http://localhost:3000/u/<%= shortURL %></a></h4>
-          <span>Target URL: <%= longURL %></span>
-          <span class='pull-right'>Visits: <%= visits %> Unique: <%= uniqueVisits %></span>
+          <h4>Short URL: <a href='/u/<%= url.shortURL %>'>http://localhost:3000/u/<%= url.shortURL %></a></h4>
+          <span>Target URL: <%= url.longURL %></span>
+          <span class='pull-right'>Visits: <%= url.visits %> Unique: <%= url.uniqueVisits %> | Created: <%= url.dateCreated %></span>
         </div>
         <table class='table'>
           <tbody>
             <tr>
               <td>
-                <form method='POST' action='/urls/<%= shortURL %>?_method=PUT'>
+                <form method='POST' action='/urls/<%= url.shortURL %>?_method=PUT'>
                   <div class='input-group'>
                     <span class='input-group-addon'>Change Target URL:</span>
-                      <input class='form-control' type='text' name='newLongURL' placeholder='<%= longURL %>'>
+                      <input class='form-control' type='text' name='newLongURL' placeholder='<%= url.longURL %>'>
                     <span class='input-group-btn'>
                       <button class='btn btn-info' type='submit'>Update!</button>
                     </span>
@@ -31,7 +31,7 @@
                 </form>
               </td>
               <td>
-                <form method='POST' action='/urls/<%= shortURL %>/delete?_method=DELETE'>
+                <form method='POST' action='/urls/<%= url.shortURL %>/delete?_method=DELETE'>
                   <button class='btn btn-s btn-danger'>
                     <span class='glyphicon glyphicon-trash'></span>
                   </button>

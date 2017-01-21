@@ -28,6 +28,7 @@
                     </td>
                     <td>Visits: <%= urls[shortURL].visits %></td>
                     <td>Unique: <%= urls[shortURL].uniqueVisits %></td>
+                    <td>Since: <%= urls[shortURL].dateCreated %></td>
                     <td class='text-right text-nowrap'>
                       <form method='POST' action='/urls/<%= shortURL %>/delete?_method=DELETE'>
                       <a href='/urls/<%= shortURL %>' class='btn btn-s btn-info'>Edit</a>
@@ -39,7 +40,7 @@
                   </tr>
                 <% } %>
               <tr>
-                <td colspan='4' class='text-center'>
+                <td colspan='5' class='text-center'>
                   <a href='/urls/new'>Shorten a new URL!</a>
                 </td>
               </tr>
