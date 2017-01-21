@@ -25,36 +25,8 @@ app.use(express.static('public'));
 
 app.set('view engine', 'ejs');
 
-// Simulated database of URLs
-const urlDatabase = {
-  'b2xVn2': {
-    shortURL: 'b2xVn2',
-    longURL: 'http://www.lighthouselabs.ca',
-    createdBy: 'TEST01',
-    dateCreated: '2017-1-18Z',
-    visits: 0,
-    uniqueVisits: 0
-  },
-  '9sm5xK': {
-    shortURL: '9sm5xK',
-    longURL: 'http://www.google.com',
-    createdBy: 'TEST01',
-    dateCreated: '2017-1-18Z',
-    visits: 0,
-    uniqueVisits: 0
-  }
-};
-
-// Simulated database of users
-const testUserPass = 'TESTING';
-const testUserHashed = bcrypt.hashSync(testUserPass, 10);
-const users = {
-  'TEST01': {
-    id: 'TEST01',
-    email: 'testuser@test.com',
-    password: testUserHashed
-  }
-};
+const urlDatabase = {};
+const users = {};
 
 // Generate a random string of length 'length' selected from the possibleChars array.
 function generateRandomString(length) {
