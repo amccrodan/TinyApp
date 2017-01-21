@@ -28,16 +28,18 @@ app.set('view engine', 'ejs');
 // Simulated database of URLs
 const urlDatabase = {
   'b2xVn2': {
+    shortURL: 'b2xVn2',
     longURL: 'http://www.lighthouselabs.ca',
     createdBy: 'TEST01',
-    dateCreated: '2017-Jan-18',
+    dateCreated: '2017-1-18Z',
     visits: 0,
     uniqueVisits: 0
   },
   '9sm5xK': {
+    shortURL: '9sm5xK',
     longURL: 'http://www.google.com',
     createdBy: 'TEST01',
-    dateCreated: '2017-Jan-18',
+    dateCreated: '2017-1-18Z',
     visits: 0,
     uniqueVisits: 0
   }
@@ -76,6 +78,15 @@ function filterDBbyCreator(req, database) {
     }
   }
   return filteredDB;
+}
+
+// Format date to yyyy-mm-dd
+function formatDate(date) {
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+
+  return `${year}-${month}-${day}Z`;
 }
 
 // Routing endpoints
@@ -194,10 +205,13 @@ app.get('/urls', (req, res) => {
 app.post('/urls', (req, res) => {
 
   const shortURL = generateRandomString(6);
+  const dateNow = new Date();
+
   urlDatabase[shortURL] = {
+    shortURL: shortURL,
     longURL: req.body.longURL,
     createdBy: req.session['user_id'],
-    dateCreated: Date.now(),
+    dateCreated: formatDate(dateNow),
     visits: 0,
     uniqueVisits: 0
   };
@@ -245,12 +259,7 @@ app.put('/urls/:id', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
-  const templateVars = {
-    shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id].longURL,
-    visits: urlDatabase[req.params.id].visits,
-    uniqueVisits: urlDatabase[req.params.id].uniqueVisits
-  };
+  const templateVars = { url: urlDatabase[req.params.id] };
   res.render('urls_show', templateVars);
 });
 
