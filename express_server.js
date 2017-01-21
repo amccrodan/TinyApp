@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 const cookieSession = require('cookie-session');
 app.use(cookieSession( {
   name: 'session',
-  keys: ['KEY'],
+  keys: ['KEY']
 }));
 
 // Bcrypt allows hashing of passwords for encrypted storage
@@ -73,7 +73,7 @@ function filterDBbyCreator(req, database) {
   const filteredDB = {};
 
   for (let key in database) {
-    if (database[key].createdBy === req.session['user_id']) {
+    if (database[key].createdBy === req.session['userId']) {
       filteredDB[key] = database[key];
     }
   }
@@ -91,7 +91,7 @@ function formatDate(date) {
 
 // Routing endpoints
 app.use(function(req, res, next){
-  res.locals.user = users[req.session['user_id']];
+  res.locals.user = users[req.session['userId']];
   next();
 });
 
@@ -111,7 +111,7 @@ app.use('/urls', (req, res, next) => {
     return;
   }
   next();
-})
+});
 
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
@@ -131,31 +131,31 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  let user_id = '';
+  let userId = '';
 
   for (let user in users) {
     if (users[user].email === req.body.email) {
-      user_id = users[user].id;
+      userId = users[user].id;
 
-      if (!bcrypt.compareSync(req.body.password, users[user_id].password)) {
+      if (!bcrypt.compareSync(req.body.password, users[userId].password)) {
         res.status(401).send('Incorrect password.');
         return;
       }
     }
   }
 
-  if (!user_id) {
+  if (!userId) {
     res.status(403).send('User email not found.');
     return;
   }
 
-  req.session.user_id = user_id;
+  req.session.userId = userId;
   res.redirect('/');
 });
 
 
 app.post('/logout', (req, res) => {
-  req.session.user_id = null;
+  req.session.userId = null;
   res.redirect('/');
 });
 
@@ -183,7 +183,7 @@ app.post('/register', (req, res) => {
 
   // Create new user
   const newUserId = generateRandomString(6);
-  req.session.user_id = newUserId;
+  req.session.userId = newUserId;
   users[newUserId] = {
     id: newUserId,
     email: req.body.email,
@@ -210,7 +210,7 @@ app.post('/urls', (req, res) => {
   urlDatabase[shortURL] = {
     shortURL: shortURL,
     longURL: req.body.longURL,
-    createdBy: req.session['user_id'],
+    createdBy: req.session['userId'],
     dateCreated: formatDate(dateNow),
     visits: 0,
     uniqueVisits: 0
@@ -231,12 +231,12 @@ app.use('/urls/:id', (req, res, next) => {
     return;
   }
 
-  if (urlDatabase[req.params.id].createdBy !== req.session['user_id']) {
+  if (urlDatabase[req.params.id].createdBy !== req.session['userId']) {
     res.status(403).send('This resource belongs to someone else.\n');
     return;
   }
   next();
-})
+});
 
 // Delete a specific url
 app.delete('/urls/:id/delete', (req, res) => {
